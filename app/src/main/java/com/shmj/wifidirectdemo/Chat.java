@@ -33,24 +33,24 @@ public class Chat extends AppCompatActivity {
     Server server;
     Client client;
     Boolean flag = true;
-    InetAddress groupOwnerAddress;
+    InetAddress mygroupOwnerAddress;
     boolean serverOrClient;
     WifiP2pInfo wifiP2pInfo;
-
-    public String getMsgToSend() {
-        return msgToSend;
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_page);
         //WifiP2pInfo wifiP2pInfo = (WifiP2pInfo)getIntent().getSerializableExtra("WifiP2pInfo");
-        wifiP2pInfo = getIntent().getExtras().getParcelable("WifiP2pInfo");
+
         //Log.i("wifiP2pinfo Chat", String.valueOf(wifiP2pInfo));
 
         serverOrClient = getIntent().getBooleanExtra("serverOrClient",true);
-        //if
+
+        wifiP2pInfo = getIntent().getExtras().getParcelable("WifiP2pInfo");
+        Log.i("WPI chat" , wifiP2pInfo.toString() );
+
+
         if(wifiP2pInfo != null) {
             setSender(wifiP2pInfo);
         }
@@ -97,13 +97,13 @@ public class Chat extends AppCompatActivity {
    }
 
     private void setSender(WifiP2pInfo wifiP2pInfo) {
-        groupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
+        mygroupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
 
         if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
             // Do whatever tasks are specific to the group owner.
             // One common case is creating a server thread and accepting
             // incoming connections.
-            server = new Server(groupOwnerAddress);
+            server = new Server(mygroupOwnerAddress);
             server.start();
             flag = true;
             showMsg("server created.");
@@ -113,7 +113,7 @@ public class Chat extends AppCompatActivity {
             // The other device acts as the client. In this case,
             // you'll want to create a client thread that connects to the group
             // owner.
-            client = new Client(groupOwnerAddress);
+            client = new Client(mygroupOwnerAddress);
             client.start();
             flag = false;
             showMsg("client created");

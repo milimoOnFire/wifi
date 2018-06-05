@@ -128,6 +128,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             mActivity.showMsg("connection established!");
             try {
+                Log.i("wifiP2pInfo BR" , wifiP2pInfo.toString() );
                 mActivity.openChat(wifiP2pInfo);
                 //chat.setSender(wifiP2pInfo);
             } catch (Exception e){
