@@ -1,5 +1,9 @@
 package com.shmj.wifidirectdemo;
 
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,7 +18,7 @@ import java.net.Socket;
 
 public class Server extends Thread {
     InetAddress address;
-    public static final int PORT = 1234;
+    public static  int PORT = 1234;
     public Server(InetAddress groupOwnerAddress){
         address = groupOwnerAddress;
     }
@@ -42,6 +46,8 @@ public class Server extends Thread {
             while (true){
                 socket = serverSocket.accept();
                 System.out.println("Add connection："+socket.getInetAddress()+":"+socket.getPort());
+                address = socket.getInetAddress();
+                PORT = socket.getPort();
                 new HandlerThread(socket);
             }
         } catch (IOException e) {
@@ -61,6 +67,8 @@ public class Server extends Thread {
 
 
         public void run() {
+            Log.i("in ane doros shod",Chat.msgToSend );
+
             try {
                 // Read client data
                 DataInputStream input = new DataInputStream(socket.getInputStream());
@@ -71,7 +79,8 @@ public class Server extends Thread {
                 System.out.println("Client sent over the content:" + clientInputStr);
 
 
-                chat.updateMessagesfromServer(clientInputStr);
+                Chat.updateMessagesfromServer(clientInputStr);
+
                 //chat.messages.setText(messages.getText() + "\n" + "client: " + clientInputStr);
 
                 // Reply to the client

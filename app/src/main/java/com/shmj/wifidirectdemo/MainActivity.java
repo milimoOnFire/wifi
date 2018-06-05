@@ -8,6 +8,7 @@ import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -33,6 +36,8 @@ public class MainActivity extends AppCompatActivity  {
     ListView listView;
     static TextView msg;
     Intent chatPage;
+
+    boolean serverOrClient;
 
     private final IntentFilter intentFilter = new IntentFilter();
     WifiP2pManager mManager;
@@ -57,10 +62,7 @@ public class MainActivity extends AppCompatActivity  {
         listView = (ListView) findViewById(R.id.listitem);
         //msg = (TextView) findViewById(R.id.msg);
 
-
-
         initFilter();
-
 
         adapter = new WifiP2pDeviceAdapter(this,peers);
         listView.setAdapter(adapter);
@@ -79,6 +81,13 @@ public class MainActivity extends AppCompatActivity  {
                     case WifiP2pDevice.CONNECTED:
                     case WifiP2pDevice.INVITED:
                         connect(device);
+                            try {
+                                WifiP2pInfo wifiP2pInfo2 = null;
+                                wifiP2pInfo2.groupOwnerAddress =  InetAddress.getAllByName(device.deviceAddress)[0];
+                                openChat( wifiP2pInfo2 );
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
                         break;
                     case WifiP2pDevice.FAILED:
@@ -112,6 +121,7 @@ public class MainActivity extends AppCompatActivity  {
         registerReceiver(mReceiver, intentFilter);
         discoverPeers();
     }
+
     /* unregister the broadcast receiver */
     @Override
     protected void onPause() {
@@ -171,20 +181,25 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     public void connect(final WifiP2pDevice device) {
-        // Picking the first device found on the network.
+        // Picking the selected device found on the network.
 
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = device.deviceAddress;
         config.wps.setup = WpsInfo.PBC;
 
+        Log.i("deviceAddress connect", String.valueOf(device.deviceAddress));
+
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
 
             @Override
             public void onSuccess() {
+
                 Log.e("connect","onSuccess");
                 showMsg("connected.");
-                chatPage = new Intent(getApplicationContext(), chat.class);
-                startActivity(chatPage);
+
+                //openChat();
+                //chatPage = new Intent(getApplicationContext(), chat.class);
+                //startActivity(chatPage);
                 //mManager.
             }
 
@@ -208,7 +223,20 @@ public class MainActivity extends AppCompatActivity  {
         });
     }
 
-    //@Override
+    public void openChat(WifiP2pInfo wifiP2pInfo){
+        Log.i("wifiP2pinfo openChat", String.valueOf(wifiP2pInfo));
+        serverOrClient = false;
+        chatPage = new Intent(getApplicationContext(), Chat.class).putExtra("serverOrClient",serverOrClient);
+        chatPage.putExtra("WifiP2pInfo",wifiP2pInfo);
+        startActivity(chatPage);
+    }
+
+    public void openChat(){
+        serverOrClient = true;
+        chatPage = new Intent(getApplicationContext(), Chat.class).putExtra("serverOrClient", serverOrClient);
+        startActivity(chatPage);
+    }
+
     public void search(View v) {
         onResume();
         Log.e("peers",peers.toString());

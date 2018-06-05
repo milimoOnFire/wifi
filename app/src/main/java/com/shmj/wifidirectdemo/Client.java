@@ -1,5 +1,7 @@
 package com.shmj.wifidirectdemo;
 
+import android.util.Log;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -35,7 +37,7 @@ public class Client extends Thread {
             out.close();
 
         }catch (Exception e){
-            System.out.println("server run abnormal: " + e.getMessage());
+            System.out.println("Client run abnormal: " + e.getMessage());
         }
     }
 
@@ -57,14 +59,16 @@ public class Client extends Thread {
 
 
             String ret = input.readUTF();
-            System.out.println("What the server returns is: " + ret);
+            Log.i("server returns: " , ret);
+            Log.i("in ane doros shod",Chat.msgToSend );
+
             // 如接收到 "OK" 则断开连接
             if ("OK".equals(ret)) {
                 System.out.println("Client will close the connection");
                 Thread.sleep(500);
             }
 
-            chat.updateMessagesfromClient(ret);
+            Chat.updateMessagesfromClient(ret);
             //messages.setText(messages.getText() + "\n" + "Server: " + ret);
 
             //out.close();

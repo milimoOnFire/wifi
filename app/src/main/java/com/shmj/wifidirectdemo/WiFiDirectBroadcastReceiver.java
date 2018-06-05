@@ -23,7 +23,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private MainActivity mActivity;
-    private chat chat;
+    private Chat chat;
 
     //private List peers = new ArrayList();
 
@@ -77,11 +77,9 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                     .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
             if (networkInfo.isConnected()) {
-
-                // We are connected with the other device, request connection
-                // info to find group owner IP
-
                 mManager.requestConnectionInfo(mChannel, connectionInfoListener);
+            } else {
+                mActivity.showMsg("no peer is connected!");
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             // Respond to this device's wifi state changing
@@ -124,12 +122,18 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
-            Log.e("ConnectionInfoListener",wifiP2pInfo.toString());
+            Log.i("ConnectionInfoListener",wifiP2pInfo.toString());
             // InetAddress from WifiP2pInfo struct.
 
-            mActivity.showMsg("connection established!");
-            chat.setSender(wifiP2pInfo);
 
+            mActivity.showMsg("connection established!");
+            try {
+                mActivity.openChat(wifiP2pInfo);
+                //chat.setSender(wifiP2pInfo);
+            } catch (Exception e){
+                mActivity.showMsg("no connection info available");
+                e.printStackTrace();
+            }
 
 
 
