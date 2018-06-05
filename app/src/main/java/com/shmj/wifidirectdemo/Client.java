@@ -16,6 +16,7 @@ import static com.shmj.wifidirectdemo.Server.PORT;
 
 public class Client extends Thread {
     InetAddress address;
+    String msgToSend;
 
     public Client(InetAddress address){
         this.address = address;
@@ -25,7 +26,7 @@ public class Client extends Thread {
         communication();
     }
 
-    public void sendFromClient(String str){
+    /*public void sendFromClient(String str){
         try {
             //ServerSocket serverSocket = new ServerSocket(PORT,5,address);
             Socket socket;
@@ -39,23 +40,32 @@ public class Client extends Thread {
         }catch (Exception e){
             System.out.println("Client run abnormal: " + e.getMessage());
         }
-    }
+    }*/
 
     private void communication(){
         Socket socket = null;
         try {
             //Create a stream socket and connect it to the
             //specified port number on the specified host
-            socket = new Socket(address, PORT);
+            //socket = new Socket(address, PORT);
+            socket = new Socket(address, Server.PORT);
+
 
             //Read server data
             DataInputStream input = new DataInputStream(socket.getInputStream());
+
             //Send data to the server
-            //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            msgToSend = Chat.getMsgToSend();
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             System.out.print("please enter: \t");
+            if(msgToSend != null ) {
+                out.writeUTF(msgToSend);
+            }
+            msgToSend = null;
 //            String str = new BufferedReader(new InputStreamReader(System.in)).readLine();
 //            out.writeUTF(str);
             //out.writeUTF("test");
+
 
 
             String ret = input.readUTF();

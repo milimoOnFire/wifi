@@ -19,11 +19,13 @@ import java.net.Socket;
 public class Server extends Thread {
     InetAddress address;
     public static  int PORT = 1234;
+    String msgToSend;
+
     public Server(InetAddress groupOwnerAddress){
         address = groupOwnerAddress;
     }
 
-    public void sendFromServer(String str){
+    /*public void sendFromServer(String str){
         try {
             ServerSocket serverSocket = new ServerSocket(PORT,5,address);
             Socket socket;
@@ -36,7 +38,7 @@ public class Server extends Thread {
         }catch (Exception e){
             System.out.println("server run abnormal: " + e.getMessage());
         }
-    }
+    }*/
 
     @Override
     public void run() {
@@ -46,8 +48,8 @@ public class Server extends Thread {
             while (true){
                 socket = serverSocket.accept();
                 System.out.println("Add connection："+socket.getInetAddress()+":"+socket.getPort());
-                address = socket.getInetAddress();
-                PORT = socket.getPort();
+                //address = socket.getInetAddress();
+                //PORT = socket.getPort();
                 new HandlerThread(socket);
             }
         } catch (IOException e) {
@@ -78,17 +80,20 @@ public class Server extends Thread {
                 // Processing client data
                 System.out.println("Client sent over the content:" + clientInputStr);
 
-
                 Chat.updateMessagesfromServer(clientInputStr);
 
                 //chat.messages.setText(messages.getText() + "\n" + "client: " + clientInputStr);
 
                 // Reply to the client
-                //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-                System.out.print("please enter:\t");
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                //System.out.print("please enter:\t");
 //                // Send a line of keyboard input
 //                String s = new BufferedReader(new InputStreamReader(System.in)).readLine();
-//                out.writeUTF(s);
+                msgToSend = Chat.getMsgToSend();
+                if( msgToSend != null) {
+                    out.writeUTF(msgToSend);
+                }
+                msgToSend = "";
 
 
                 //out.writeUTF("test back");

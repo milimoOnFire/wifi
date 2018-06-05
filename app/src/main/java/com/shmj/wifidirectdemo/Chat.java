@@ -22,7 +22,6 @@ import java.net.UnknownHostException;
 
 public class Chat extends AppCompatActivity {
 
-    public static Object massage;
     TextView otherDevicename;
     static TextView messages;
     Button sendBbutton;
@@ -68,6 +67,10 @@ public class Chat extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
+    public static String getMsgToSend() {
+        return msgToSend;
+    }
+
     public void fuckingSend(View view){
        EditText textTosend2 = (EditText) findViewById(R.id.textToSend);
         if(String.valueOf(textTosend2.getText()) != null){
@@ -77,17 +80,19 @@ public class Chat extends AppCompatActivity {
             if(flag == true){ // for server
                 updateMessagesfromServer("");
                     //server = new Server(  InetAddress.getByName("192.168.49.1") );
-                    server = new Server(  wifiP2pInfo.groupOwnerAddress );
+                server = new Server(  wifiP2pInfo.groupOwnerAddress );
+                server.start();
 
                 //server.sendFromServer(String.valueOf(textTosend));
-                server.sendFromServer(String.valueOf(msgToSend));
+                //server.sendFromServer(String.valueOf(msgToSend));
             }else{    // for client
                 updateMessagesfromClient("");
-                    client = new Client(  wifiP2pInfo.groupOwnerAddress );
+                client = new Client(  wifiP2pInfo.groupOwnerAddress );
+                client.start();
                     //client = new Client( InetAddress.getByName("192.168.49.1") );
 
 //            client.sendFromClient(String.valueOf(textTosend));
-                client.sendFromClient(String.valueOf(msgToSend));
+                //client.sendFromClient(String.valueOf(msgToSend));
             }
 
 
@@ -122,18 +127,13 @@ public class Chat extends AppCompatActivity {
     }
 
     static void updateMessagesfromServer(String msgs){
-        if(msgs == null){
-            messages.setText(messages.getText() );
-        }else
-        {
+        if(msgs != null){
             messages.setText(messages.getText() + "\n" + "client: " + msgs);
         }
     }
 
     public static void updateMessagesfromClient(String ret) {
-        if(ret == null){
-            messages.setText(messages.getText());
-        }else {
+        if(ret != null){
             messages.setText(messages.getText() + "\n" + "Server: " + ret);
         }
     }
