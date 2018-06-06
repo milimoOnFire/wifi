@@ -2,7 +2,7 @@ package com.shmj.wifidirectdemo;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -17,12 +17,16 @@ import java.net.Socket;
  */
 
 public class Server extends Thread {
+    TextView mMesseges;
     InetAddress address;
     public static  int PORT = 1234;
     String msgToSend;
+    Context mContext;
 
-    public Server(InetAddress groupOwnerAddress){
+
+    public Server(InetAddress groupOwnerAddress, Context context){
         address = groupOwnerAddress;
+        mContext = context;
     }
 
     /*public void sendFromServer(String str){
@@ -79,9 +83,11 @@ public class Server extends Thread {
                 String clientInputStr = input.readUTF();
                 // Processing client data
                 System.out.println("Client sent over the content:" + clientInputStr);
-
-                Chat.updateMessagesfromServer(clientInputStr);
-
+                TextView txtView = (TextView) ((Chat)mContext).findViewById(R.id.messages);
+                // txtView.setText(clientInputStr);
+                txtView.setText(txtView.getText() + "\n" + "client: " + clientInputStr);
+                //TextView tt = (TextView) tt.findViewById();
+                // mMesseges.setText("milad");
                 //chat.messages.setText(messages.getText() + "\n" + "client: " + clientInputStr);
 
                 // Reply to the client
@@ -103,6 +109,7 @@ public class Server extends Thread {
             } catch (Exception e) {
                 System.out.println("server run abnormal: " + e.getMessage());
             } finally {
+
                 if (socket != null) {
                     try {
                         socket.close();

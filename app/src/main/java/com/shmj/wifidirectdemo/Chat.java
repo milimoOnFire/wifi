@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * Created by Shahriar on 3/5/2018.
@@ -62,22 +61,22 @@ public class Chat extends AppCompatActivity {
         msgToSend = "thisShitIsNull";
     }
 
-    public void showMsg(String message){ Toast.makeText(this, message, Toast.LENGTH_LONG).show(); }
+    public void showMsg(String message){ Toast.makeText(Chat.this, message, Toast.LENGTH_LONG).show(); }
 
     public static String getMsgToSend() {
         return msgToSend;
     }
 
     public void fuckingSend(View view){
-       EditText textTosend2 = (EditText) findViewById(R.id.textToSend);
+        EditText textTosend2 = (EditText) findViewById(R.id.textToSend);
         if(String.valueOf(textTosend2.getText()) != null){
             msgToSend = String.valueOf(textTosend2.getText());
             showMsg(msgToSend+" from Fucking Send.");
 
             if(serverOrClient == true){ // for server
                 updateMessagesfromServer("");
-                    //server = new Server(  InetAddress.getByName("192.168.49.1") );
-                server = new Server(  wifiP2pInfo.groupOwnerAddress );
+                //server = new Server(  InetAddress.getByName("192.168.49.1") );
+                server = new Server(  wifiP2pInfo.groupOwnerAddress ,Chat.this );
                 server.start();
 
                 //server.sendFromServer(String.valueOf(textTosend));
@@ -86,7 +85,7 @@ public class Chat extends AppCompatActivity {
                 updateMessagesfromClient("");
                 client = new Client(  wifiP2pInfo.groupOwnerAddress );
                 client.start();
-                    //client = new Client( InetAddress.getByName("192.168.49.1") );
+                //client = new Client( InetAddress.getByName("192.168.49.1") );
 
 //            client.sendFromClient(String.valueOf(textTosend));
                 //client.sendFromClient(String.valueOf(msgToSend));
@@ -96,7 +95,7 @@ public class Chat extends AppCompatActivity {
         }
 
         Log.i("msg to send:",msgToSend);
-   }
+    }
 
     private void setSender(WifiP2pInfo wifiP2pInfo, boolean serverOrClient) {
         mygroupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
@@ -105,7 +104,7 @@ public class Chat extends AppCompatActivity {
             // Do whatever tasks are specific to the group owner.
             // One common case is creating a server thread and accepting
             // incoming connections.
-            server = new Server(mygroupOwnerAddress);
+            server = new Server(mygroupOwnerAddress,Chat.this);
             server.start();
             showMsg("server created.");
 //                chat.sendAsServer(groupOwnerAddress);
@@ -122,6 +121,7 @@ public class Chat extends AppCompatActivity {
     }
 
     static void updateMessagesfromServer(String msgs){
+        Log.i("update function",msgToSend);
         if(msgs != null){
             messages.setText(messages.getText() + "\n" + "client: " + msgs);
         }

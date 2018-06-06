@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/WIFIDirectDemo.iml" filepath="$PROJECT_DIR$/WIFIDirectDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wifi.iml" filepath="$PROJECT_DIR$/wifi.iml" />
     </modules>
   </component>
 </project>
