@@ -81,15 +81,8 @@ public class MainActivity extends AppCompatActivity  {
                     case WifiP2pDevice.CONNECTED:
                     case WifiP2pDevice.INVITED:
                         connect(device);
-                            try {
-                                ///WifiP2pInfo wifiP2pInfo2 = null;
-                                //wifiP2pInfo2.groupOwnerAddress =  InetAddress.getAllByName(device.deviceAddress)[0];
-                                //openChat( wifiP2pInfo2 );
-                                //openChat();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
+                        //openChat( wifiP2pInfo2 );
+                        //openChat();
                         break;
                     case WifiP2pDevice.FAILED:
                     case WifiP2pDevice.UNAVAILABLE:
@@ -224,9 +217,9 @@ public class MainActivity extends AppCompatActivity  {
         });
     }
 
-    public void openChat(WifiP2pInfo wifiP2pInfo){
+    public void openChat(WifiP2pInfo wifiP2pInfo, boolean serverOrClient){  //false for client and vice versa
         Log.i("wifiP2pinfo MActivity", String.valueOf(wifiP2pInfo));
-        serverOrClient = false;
+        //serverOrClient = false;
         chatPage = new Intent(getApplicationContext(), Chat.class).putExtra("serverOrClient",serverOrClient);
         chatPage.putExtra("WifiP2pInfo",wifiP2pInfo);
         startActivity(chatPage);

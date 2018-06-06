@@ -129,7 +129,11 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             mActivity.showMsg("connection established!");
             try {
                 Log.i("wifiP2pInfo BR" , wifiP2pInfo.toString() );
-                mActivity.openChat(wifiP2pInfo);
+                if( wifiP2pInfo.isGroupOwner ) {
+                    mActivity.openChat(wifiP2pInfo, true);
+                }else {
+                    mActivity.openChat(wifiP2pInfo, false);
+                }
                 //chat.setSender(wifiP2pInfo);
             } catch (Exception e){
                 mActivity.showMsg("no connection info available");

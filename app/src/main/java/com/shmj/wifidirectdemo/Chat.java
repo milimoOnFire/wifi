@@ -31,7 +31,6 @@ public class Chat extends AppCompatActivity {
     static String  msgToSend;
     Server server;
     Client client;
-    Boolean flag = true;
     InetAddress mygroupOwnerAddress;
     boolean serverOrClient;
     WifiP2pInfo wifiP2pInfo;
@@ -51,7 +50,7 @@ public class Chat extends AppCompatActivity {
 
 
         if(wifiP2pInfo != null) {
-            setSender(wifiP2pInfo);
+            setSender(wifiP2pInfo, serverOrClient);
         }
 
         sendBbutton = (Button) findViewById(R.id.sendButton);
@@ -60,12 +59,10 @@ public class Chat extends AppCompatActivity {
 
         otherDevicename = (TextView) findViewById(R.id.otherDeviceName);
         otherDevicename.setText("this is a new chat");
-        msgToSend = "nullmsg";
+        msgToSend = "thisShitIsNull";
     }
 
-    public void showMsg (String message){
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
+    public void showMsg(String message){ Toast.makeText(this, message, Toast.LENGTH_LONG).show(); }
 
     public static String getMsgToSend() {
         return msgToSend;
@@ -77,7 +74,7 @@ public class Chat extends AppCompatActivity {
             msgToSend = String.valueOf(textTosend2.getText());
             showMsg(msgToSend+" from Fucking Send.");
 
-            if(flag == true){ // for server
+            if(serverOrClient == true){ // for server
                 updateMessagesfromServer("");
                     //server = new Server(  InetAddress.getByName("192.168.49.1") );
                 server = new Server(  wifiP2pInfo.groupOwnerAddress );
@@ -101,26 +98,24 @@ public class Chat extends AppCompatActivity {
         Log.i("msg to send:",msgToSend);
    }
 
-    private void setSender(WifiP2pInfo wifiP2pInfo) {
+    private void setSender(WifiP2pInfo wifiP2pInfo, boolean serverOrClient) {
         mygroupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
 
-        if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
+        if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner && serverOrClient == true) {
             // Do whatever tasks are specific to the group owner.
             // One common case is creating a server thread and accepting
             // incoming connections.
             server = new Server(mygroupOwnerAddress);
             server.start();
-            flag = true;
             showMsg("server created.");
 //                chat.sendAsServer(groupOwnerAddress);
 
-        } else if (wifiP2pInfo.groupFormed) {
+        } else if (wifiP2pInfo.groupFormed && serverOrClient == false) {
             // The other device acts as the client. In this case,
             // you'll want to create a client thread that connects to the group
             // owner.
             client = new Client(mygroupOwnerAddress);
             client.start();
-            flag = false;
             showMsg("client created");
             //chat.sendAsClient(groupOwnerAddress);
         }
